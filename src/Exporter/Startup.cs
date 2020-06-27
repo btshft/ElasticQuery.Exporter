@@ -72,8 +72,6 @@ namespace ElasticQuery.Exporter
                     .OfType<MetricsPrometheusTextOutputFormatter>().First();
             });
 
-            services.AddControllers();
-
             // Exporter
             services.AddOptions<ExporterOptions>()
                 .Configure(o =>
@@ -92,7 +90,7 @@ namespace ElasticQuery.Exporter
 
 
             services.AddSingleton(_ => new DeserializerBuilder()
-                .WithNamingConvention(CamelCaseNamingConvention.Instance)
+                .WithNamingConvention(UnderscoredNamingConvention.Instance)
                 .Build());
 
             services.AddSingleton(sp =>
@@ -126,18 +124,17 @@ namespace ElasticQuery.Exporter
         public void Configure(IApplicationBuilder app, IWebHostEnvironment env)
         {
             if (env.IsDevelopment())
-            {
                 app.UseDeveloperExceptionPage();
-            }
 
             app.UseRouting();
-            app.UseAuthorization();
             app.UseEndpoints(endpoints =>
             {
-                endpoints.MapControllers();
-            });
+                var builder = endpoints
+                    .CreateApplicationBuilder()
+                    .UseMetricsEndpoint();
 
-            app.UseMetricsEndpoint();
+                endpoints.MapGet("/metrics", builder.Build());
+            });
         }
     }
 }

@@ -33,13 +33,36 @@ namespace ElasticQuery.Exporter.Services.QueryExecutor
 
                 return d
                     .Source(enabled: false)
-                    .Query(q => q
-                    .Raw(query.Query));
+                    .Query(q =>
+                    {
+                        var esQuery = q.Raw(query.Query);
+
+                        if (query.SlidingDate != null)
+                        {
+                            var to = DateMath.Now;
+                            var from = DateMath.FromString($"now-{query.SlidingDate.Range}");
+
+                            var slidingDateQuery = q.Bool(b => b
+                                .Filter(f => f
+                                    .Bool(bf => bf
+                                        .Must(m => m
+                                            .DateRange(r => r
+                                                .Field(query.SlidingDate.Field)
+                                                .LessThan(to)
+                                                .GreaterThanOrEquals(from))))));
+
+                            esQuery = esQuery && slidingDateQuery;
+                        }
+
+                        return esQuery;
+                    });
 
             }, cancellation).WithTimeout(timeout);
 
             if (result.TimedOut)
             {
+                _logger.LogWarning($"Query '{query.Name}' - evaluation timed out after '{timeout}'");
+
                 return new FailureMetricQueryResult
                 {
                     Timeout = result.TimedOut

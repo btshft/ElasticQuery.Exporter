@@ -1,4 +1,5 @@
-﻿using System.IO;
+﻿using System;
+using System.IO;
 using ElasticQuery.Exporter.Options;
 using FluentValidation;
 
@@ -41,12 +42,22 @@ namespace ElasticQuery.Exporter.Validators
             RuleFor(e => e.Metrics.Evaluation)
                 .NotNull();
 
-            RuleFor(e => e.Metrics.Evaluation.Timeout)
-                .Custom((timeout, context) =>
+            RuleFor(e => e.Metrics.Evaluation)
+                .Custom((evaluation, context) =>
                 {
                     var source = (ExporterOptions) context.InstanceToValidate;
-                    if (source.Metrics?.Evaluation != null && timeout > source.Metrics.Evaluation.Interval)
-                        context.AddFailure("Timeout cannot be greater than evaluation period");
+
+                    if (evaluation != null)
+                    {
+                        if (evaluation.Timeout > source.Metrics.Evaluation.Interval)
+                            context.AddFailure("Timeout cannot be greater than evaluation interval");
+
+                        if (evaluation.Timeout <= TimeSpan.Zero)
+                            context.AddFailure("Timeout should be more than 0");
+
+                        if (evaluation.Interval <= TimeSpan.Zero)
+                            context.AddFailure("Interval should be more than 0");
+                    }
                 });
         }
     }

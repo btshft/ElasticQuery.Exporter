@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 
 namespace ElasticQuery.Exporter.Models
 {
@@ -8,10 +9,16 @@ namespace ElasticQuery.Exporter.Models
 
         public string Query { get; set; }
 
+        public TimeSpan? Timeout { get; set; }
+
+        public TimeSpan? Interval { get; set; }
+
         public List<string> Indices { get; set; }
             = new List<string>();
 
         public Dictionary<string, string> Labels { get; set; } 
             = new Dictionary<string, string>();
+
+        public MetricQuerySlidingDate SlidingDate { get; set; }
     }
 }

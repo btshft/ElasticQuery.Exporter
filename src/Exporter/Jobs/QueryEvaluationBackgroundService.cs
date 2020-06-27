@@ -46,8 +46,8 @@ namespace ElasticQuery.Exporter.Jobs
                 return Task.Run(async () =>
                 {
                     var options = _optionsProvider.Value;
-                    var period = options.Metrics.Evaluation.Interval;
-                    var timeout = options.Metrics.Evaluation.Timeout;
+                    var period = q.Interval.GetValueOrDefault(options.Metrics.Evaluation.Interval);
+                    var timeout = q.Timeout.GetValueOrDefault(options.Metrics.Evaluation.Timeout);
 
                     var delay = TimeSpan.FromSeconds(_random.Next(0, 2));
                     await Task.Delay(delay, stoppingToken);

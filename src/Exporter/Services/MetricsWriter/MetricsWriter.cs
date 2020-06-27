@@ -1,9 +1,8 @@
-﻿using System.Linq;
+﻿using System.Collections.Generic;
+using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 using App.Metrics;
-using App.Metrics.Counter;
-using App.Metrics.Gauge;
 using ElasticQuery.Exporter.Models;
 using ElasticQuery.Exporter.Services.QueryExecutor.Results;
 
@@ -21,52 +20,36 @@ namespace ElasticQuery.Exporter.Services.MetricsWriter
         /// <inheritdoc />
         public Task WriteAsync(MetricQuery query, IMetricQueryResult result, CancellationToken cancellation = default)
         {
+            MetricTags CreateTags()
+            {
+                var labels = (IDictionary<string, string>)new Dictionary<string, string>
+                {
+                    { "query", query.Name }
+                };
+
+                if (query.Labels.Any())
+                    labels = labels.MergeDifference(query.Labels);
+
+                return new MetricTags(labels.Keys.ToArray(), labels.Values.ToArray());
+            }
+
             void WriteSucceed(SucceedMetricQueryResult succeedResult)
             {
-                var hitsGauge = new GaugeOptions
-                {
-                    Name = $"{query.Name}_hits",
-                    MeasurementUnit = Unit.Custom("hits"),
-                    ResetOnReporting = true
-                };
+                var tags = CreateTags();
 
-                var durationGauge = new GaugeOptions
-                {
-                    Name = $"{query.Name}_duration_ms",
-                    ResetOnReporting = true
-                };
-
-                var tags = query.Labels.Any()
-                    ? new MetricTags(query.Labels.Keys.ToArray(), query.Labels.Values.ToArray())
-                    : new MetricTags();
-
-                _metrics.Measure.Gauge.SetValue(durationGauge, tags, succeedResult.Duration.TotalMilliseconds);
-                _metrics.Measure.Gauge.SetValue(hitsGauge, tags, succeedResult.Hits);
+                _metrics.Measure.Gauge.SetValue(MetricsRegistry.Gauges.Hits, tags, succeedResult.Hits);
+                _metrics.Measure.Gauge.SetValue(MetricsRegistry.Gauges.Duration, tags, succeedResult.Duration.TotalMilliseconds);
             }
 
             void WriteFailure(FailureMetricQueryResult failureResult)
             {
-                var exceptionsCounter = new CounterOptions
-                {
-                    Name = $"{query.Name}_exceptions",
-                    ResetOnReporting = true
-                };
-
-                var timeoutsCounter = new CounterOptions
-                {
-                    Name = $"{query.Name}_timeouts",
-                    ResetOnReporting = true
-                };
-
-                var tags = query.Labels.Any()
-                    ? new MetricTags(query.Labels.Keys.ToArray(), query.Labels.Values.ToArray())
-                    : new MetricTags();
+                var tags = CreateTags();
 
                 if (failureResult.Timeout)
-                    _metrics.Measure.Counter.Increment(timeoutsCounter, tags);
+                    _metrics.Measure.Counter.Increment(MetricsRegistry.Counters.Timeouts, tags);
 
                 if (failureResult.Exception != null)
-                    _metrics.Measure.Counter.Increment(exceptionsCounter, tags);
+                    _metrics.Measure.Counter.Increment(MetricsRegistry.Counters.Exceptions, tags);
             }
 
             switch (result)
