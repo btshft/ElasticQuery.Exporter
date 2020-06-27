@@ -4,6 +4,7 @@ using App.Metrics;
 using App.Metrics.Formatters.Prometheus;
 using ElasticQuery.Exporter.Jobs;
 using ElasticQuery.Exporter.Lib.Extension;
+using ElasticQuery.Exporter.Middleware;
 using ElasticQuery.Exporter.Models;
 using ElasticQuery.Exporter.Options;
 using ElasticQuery.Exporter.Services.MetricsWriter;
@@ -118,7 +119,7 @@ namespace ElasticQuery.Exporter
             services.AddSingleton<IMetricQueryExecutor, MetricQueryExecutor>();
             services.AddSingleton<IMetricsWriter, MetricsWriter>();
 
-            services.AddHostedService<QueryEvaluationBackgroundService>();
+            services.AddHostedService<MetricsEvaluationScheduler>();
         }
 
         public void Configure(IApplicationBuilder app, IWebHostEnvironment env)
@@ -131,6 +132,7 @@ namespace ElasticQuery.Exporter
             {
                 var builder = endpoints
                     .CreateApplicationBuilder()
+                    .UseMiddleware<MetricsEvaluationMiddleware>()
                     .UseMetricsEndpoint();
 
                 endpoints.MapGet("/metrics", builder.Build());

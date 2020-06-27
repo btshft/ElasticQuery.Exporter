@@ -9,4 +9,5 @@ exporter:
         url: http://elasticsearch.devtest.local:9200
 
   query_files:
-  - "./.queries/test.query.yaml"
+  - "./.queries/test.query-scheduled.yaml"
+  - "./.queries/test.query-on-demand.yaml"

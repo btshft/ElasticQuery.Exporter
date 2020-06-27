@@ -16,7 +16,10 @@
   </ItemGroup>
 
   <ItemGroup>
-    <None Include=".queries\test.query.yaml">
+    <None Include=".queries\test.query-scheduled.yaml">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Include=".queries\test.query-on-demand.yaml">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
   </ItemGroup>

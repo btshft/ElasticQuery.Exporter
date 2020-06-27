@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using ElasticQuery.Exporter.Models;
 
 namespace ElasticQuery.Exporter.Options
 {
@@ -22,9 +23,11 @@ namespace ElasticQuery.Exporter.Options
 
             public class EvaluationOptions
             {
+                public MetricsEvaluationMode Mode { get; set; } = MetricsEvaluationMode.Scheduled;
+
                 public TimeSpan Interval { get; set; } = TimeSpan.FromSeconds(30);
 
-                public TimeSpan Timeout { get; set; } = TimeSpan.FromSeconds(15);
+                public TimeSpan Timeout { get; set; } = TimeSpan.FromSeconds(30);
             }
         }
 

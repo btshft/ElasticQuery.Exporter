@@ -18,5 +18,6 @@ exporter:
     evaluation:
       interval: 00:00:30
       timeout: 00:00:15
+      mode: Scheduled
 
   query_files:

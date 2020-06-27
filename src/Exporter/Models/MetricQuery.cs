@@ -13,6 +13,8 @@ namespace ElasticQuery.Exporter.Models
 
         public TimeSpan? Interval { get; set; }
 
+        public MetricsEvaluationMode? EvaluationMode { get; set; }
+
         public List<string> Indices { get; set; }
             = new List<string>();
 

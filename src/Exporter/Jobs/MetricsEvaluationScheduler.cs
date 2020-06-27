@@ -13,20 +13,20 @@ using Microsoft.Extensions.Options;
 
 namespace ElasticQuery.Exporter.Jobs
 {
-    public class QueryEvaluationBackgroundService : BackgroundService
+    public class MetricsEvaluationScheduler : BackgroundService
     {
         private readonly IMetricQueriesProvider _queriesProvider;
         private readonly IMetricQueryExecutor _queryExecutor;
         private readonly IMetricsWriter _metricsWriter;
-        private readonly ILogger<QueryEvaluationBackgroundService> _logger;
+        private readonly ILogger<MetricsEvaluationScheduler> _logger;
         private readonly Random _random;
         private readonly IOptions<ExporterOptions> _optionsProvider;
 
-        public QueryEvaluationBackgroundService(
+        public MetricsEvaluationScheduler(
             IMetricQueriesProvider queriesProvider, 
             IMetricQueryExecutor queryExecutor, 
             IMetricsWriter metricsWriter,
-            ILogger<QueryEvaluationBackgroundService> logger, 
+            ILogger<MetricsEvaluationScheduler> logger, 
             IOptions<ExporterOptions> optionsProvider)
         {
             _queriesProvider = queriesProvider;
@@ -43,9 +43,24 @@ namespace ElasticQuery.Exporter.Jobs
             var queries = await _queriesProvider.GetAsync(stoppingToken);
             var tasks = queries.Select(q =>
             {
+                var options = _optionsProvider.Value;
+                var defaultEvaluationMode = options.Metrics.Evaluation.Mode;
+
+                if (q.EvaluationMode == MetricsEvaluationMode.OnDemand)
+                {
+                    _logger.LogInformation($"Query '{q.Name}' background execution skipped because explicit on-demand evaluation mode set.");
+                    return Task.CompletedTask;
+                }
+
+                if (defaultEvaluationMode == MetricsEvaluationMode.OnDemand &&
+                    !q.EvaluationMode.HasValue)
+                {
+                    _logger.LogInformation($"Query '{q.Name}' background execution skipped because default execution mode is 'on-demand' and no explicit mode set on query.");
+                    return Task.CompletedTask;
+                }
+
                 return Task.Run(async () =>
                 {
-                    var options = _optionsProvider.Value;
                     var period = q.Interval.GetValueOrDefault(options.Metrics.Evaluation.Interval);
                     var timeout = q.Timeout.GetValueOrDefault(options.Metrics.Evaluation.Timeout);
 
@@ -70,8 +85,12 @@ namespace ElasticQuery.Exporter.Jobs
 
                     try
                     {
+                        _logger.LogInformation($"Executing scheduled query '{query.Name}'");
+
                         var result = await _queryExecutor.ExecuteAsync(query, timeout, cancellation);
                         await _metricsWriter.WriteAsync(query, result, cancellation);
+
+                        _logger.LogInformation($"Executed scheduled query '{query.Name}'");
 
                         var afterExecution = DateTime.UtcNow;
                         var executionDuration = afterExecution - beforeExecution;
@@ -85,7 +104,7 @@ namespace ElasticQuery.Exporter.Jobs
                             await Task.Delay(waitTime, cancellation);
                         }
                     }
-                    catch (TaskCanceledException)
+                    catch (OperationCanceledException)
                     {
                         // Ignore
                     }

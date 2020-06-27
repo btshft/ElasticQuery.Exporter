@@ -18,16 +18,25 @@ namespace ElasticQuery.Exporter.Services.QueryProvider
         private readonly IOptions<ExporterOptions> _exporterOptionsProvider;
         private readonly IDeserializer _deserializer;
         private readonly IValidator<MetricQuery> _queryValidator;
+        private readonly Lazy<Task<IReadOnlyCollection<MetricQuery>>> _queriesProvider;
 
         public FileMetricQueriesProvider(IOptions<ExporterOptions> exporterOptionsProvider, IDeserializer deserializer, IValidator<MetricQuery> queryValidator)
         {
             _exporterOptionsProvider = exporterOptionsProvider;
             _deserializer = deserializer;
             _queryValidator = queryValidator;
+
+            _queriesProvider = new Lazy<Task<IReadOnlyCollection<MetricQuery>>>(CreateQueries);
         }
 
         /// <inheritdoc />
         public async Task<IReadOnlyCollection<MetricQuery>> GetAsync(CancellationToken cancellation = default)
+        {
+            var queries = _queriesProvider.Value;
+            return await queries;
+        }
+
+        private async Task<IReadOnlyCollection<MetricQuery>> CreateQueries()
         {
             var options = _exporterOptionsProvider.Value;
             var queries = new Dictionary<string, MetricQuery>();
@@ -39,13 +48,13 @@ namespace ElasticQuery.Exporter.Services.QueryProvider
                     if (!File.Exists(queryFile))
                         throw new Exception($"Query file '{queryFile}' not exists");
 
-                    var content = await File.ReadAllTextAsync(queryFile, Encoding.UTF8, cancellation);
+                    var content = await File.ReadAllTextAsync(queryFile, Encoding.UTF8);
                     var query = _deserializer.Deserialize<MetricQuery>(content);
 
                     if (queries.ContainsKey(query.Name))
                         throw new Exception($"Attempt to insert duplicate query '{query.Name}'");
 
-                    var result = await _queryValidator.ValidateAsync(query, cancellation);
+                    var result = await _queryValidator.ValidateAsync(query);
                     if (!result.IsValid)
                         throw new Exception($"Query '{query.Name}' is invalid: {result}");
 
