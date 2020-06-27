@@ -1,0 +1,12 @@
+﻿serilog:
+  minimum_level:
+    default: "Information"
+
+exporter:
+  elasticsearch:
+    connection:
+      singlenode:
+        url: http://elasticsearch.devtest.local:9200
+
+  query_files:
+  - "./.queries/test.query.yaml"

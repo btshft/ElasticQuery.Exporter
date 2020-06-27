@@ -1,0 +1,22 @@
+﻿serilog:
+  minimum_level:
+    default: "Warning"
+    override:
+      microsoft: "Warning"
+      microsoft.hosting.lifetime: "Information"
+      system: "Warning"
+  enrich:
+  - "FromLogContext"
+  - "WithThreadId"
+  write_to:
+  - name: Console
+    args:
+      output_template: "{Timestamp:HH:mm:ss} [{Level:u3}] <{SourceContext:l}> {TraceId}{NewLine}{Message:lj}{NewLine}{Exception}{NewLine}"
+
+exporter:
+  metrics: 
+    evaluation:
+      interval: 00:00:30
+      timeout: 00:00:15
+
+  query_files:

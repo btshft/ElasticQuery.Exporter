@@ -1,0 +1,11 @@
+* text=auto eol=lf
+
+*.txt text
+*.yaml text
+*.yml text
+*.bash text
+*.md text
+*.sh text
+*.toml text
+*.json text
+*.env text
