@@ -1,0 +1,21 @@
+name: "scheduled_query"
+indices:
+- kibana_sample_data_logs
+
+evaluation_mode: scheduled
+sliding_date:
+  field: "timestamp"
+  range: 60d
+
+query: |
+  { 
+      "bool": {
+         "must": [
+           {
+            "match": {
+              "referer": "http://twitter.com/success/james-m-kelly"
+            }
+          }
+        ]
+      }
+  }

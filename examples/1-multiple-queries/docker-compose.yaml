@@ -1,0 +1,16 @@
+version: '3.7'
+
+services:
+  es-query-exporter: 
+    image: docker.pkg.github.com/btshft/elasticquery.exporter/elastic-query-exporter:sha-2392426
+    environment: 
+      - ASPNETCORE_ENVIRONMENT=Release
+    ports:
+      - 5050:80
+    volumes:
+    - type: bind
+      source: ./config/appsettings.Release.yaml
+      target: /app/appsettings.Release.yaml
+    - type: bind
+      source: ./queries
+      target: /app/queries
