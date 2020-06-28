@@ -2,7 +2,7 @@
 
 The exporter runs Elasticsearch queries and transforms query results to Prometheus metrics.
 
-[![Docker Image Version (latest semver)](https://img.shields.io/docker/v/bitshift/elastic-query-exporter?sort=semver)](https://hub.docker.com/r/bitshift/elastic-query-exporter)
+[![Docker Image Version (latest semver)](https://img.shields.io/docker/v/bitshift/elastic-query-exporter?sort=semver)](https://hub.docker.com/r/bitshift/elastic-query-exporter) [![Docs](https://img.shields.io/badge/docs-master-blue)](https://github.com/btshft/ElasticQuery.Exporter/tree/master/docs)
 
 ## Queries
 
@@ -47,4 +47,5 @@ docker run --rm --name es-query-exporter \
 
 > Note: with the presented startup format, query files will be available at `app/queries` dir, so in configuration file same file path should be specified.
 
-Other launch formats and configuration files are presented in the [examples](https://github.com/btshft/ElasticQuery.Exporter/tree/master/examples).
+Other launch formats and configuration files are presented in the [examples](https://github.com/btshft/ElasticQuery.Exporter/tree/master/examples). 
+See [documentation](https://github.com/btshft/ElasticQuery.Exporter/tree/master/docs) for configuration details.
