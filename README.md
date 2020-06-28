@@ -27,8 +27,24 @@ Name | Description | Type | Labels
 Aggregations are not supported currently.
 
 
-## Usage 
-// TODO
+## Quickstart 
 
-### Examples
-// TODO
+1. Create configuration file `appsettings.Release.yaml` and query files.
+2. Run exporter as docker container
+
+Replace:
+* `${CONFIG_PATH}` with path to `appsettings.Release.yaml`;
+* `${QUERIES_PATH}` with path to queries directory;
+* `${HOST_PORT}` with desired host port where you want to run exporter.
+
+```
+docker run --rm --name es-query-exporter \
+   -v ${CONFIG_PATH}:/app/appsettings.Release.yaml \
+   -v ${QUERIES_PATH}:/app/queries -p ${HOST_PORT}:80 \
+   -e ASPNETCORE_ENVIRONMENT=Release \
+   bitshift/elastic-query-exporter:latest
+```
+
+> Note: with the presented startup format, query files will be available at `app/queries` dir, so in configuration file same file path should be specified.
+
+Other launch formats and configuration files are presented in the [examples](https://github.com/btshft/ElasticQuery.Exporter/tree/master/examples).
