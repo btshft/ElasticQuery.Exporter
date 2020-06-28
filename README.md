@@ -2,6 +2,8 @@
 
 The exporter runs Elasticsearch queries and transforms query results to Prometheus metrics.
 
+[![Development](https://github.com/btshft/ElasticQuery.Exporter/workflows/Development/badge.svg)](https://github.com/btshft/ElasticQuery.Exporter/actions?query=workflow%3ADevelopment)
+
 ## Queries
 
 Queries are defined in own files similar to how alerts rules are defined in Prometheus.
