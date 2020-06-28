@@ -1,8 +1,8 @@
-# Prometheus Elasticsearch query exporter [![Docker Image Version (latest semver)](https://img.shields.io/docker/v/bitshift/elastic-query-exporter?sort=semver)](https://hub.docker.com/r/bitshift/elastic-query-exporter)
+# Prometheus Elasticsearch query exporter 
 
 The exporter runs Elasticsearch queries and transforms query results to Prometheus metrics.
 
-[![Release](https://github.com/btshft/ElasticQuery.Exporter/workflows/Release/badge.svg)](https://github.com/btshft/ElasticQuery.Exporter/actions?query=workflow%3ARelease) [![Development](https://github.com/btshft/ElasticQuery.Exporter/workflows/Development/badge.svg)](https://github.com/btshft/ElasticQuery.Exporter/actions?query=workflow%3ADevelopment)
+[![Docker Image Version (latest semver)](https://img.shields.io/docker/v/bitshift/elastic-query-exporter?sort=semver)](https://hub.docker.com/r/bitshift/elastic-query-exporter)
 
 ## Queries
 
