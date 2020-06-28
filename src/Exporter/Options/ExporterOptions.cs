@@ -35,6 +35,8 @@ namespace ElasticQuery.Exporter.Options
         {
             public ConnectionOptions Connection { get; set; }
 
+            public TimeSpan RequestTimeout { get; set; } = TimeSpan.FromSeconds(60);
+
             public class ConnectionOptions
             {
                 public SingleNodeOptions SingleNode { get; set; }

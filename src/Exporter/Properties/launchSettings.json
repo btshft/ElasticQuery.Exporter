@@ -10,7 +10,7 @@
       },
       "applicationUrl": "http://localhost:5000"
     },
-    "Docker": {
+    "Exporter (Docker)": {
       "commandName": "Docker",
       "launchBrowser": true,
       "launchUrl": "{Scheme}://{ServiceHost}:{ServicePort}/metrics",

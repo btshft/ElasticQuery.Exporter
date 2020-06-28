@@ -110,7 +110,8 @@ namespace ElasticQuery.Exporter
                 if (pool == null)
                     throw new Exception("Unable to construct ES connection pool");
 
-                var settings = new ConnectionSettings(pool);
+                var settings = new ConnectionSettings(pool)
+                    .RequestTimeout(options.ElasticSearch.RequestTimeout);
 
                 return new ElasticClient(settings);
             });

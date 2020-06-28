@@ -14,6 +14,8 @@
       output_template: "{Timestamp:HH:mm:ss} [{Level:u3}] <{SourceContext:l}> {TraceId}{NewLine}{Message:lj}{NewLine}{Exception}{NewLine}"
 
 exporter:
+  elasticsearch:
+    request_timeout: 00:02:00
   metrics: 
     evaluation:
       interval: 00:00:30
