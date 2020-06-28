@@ -18,15 +18,6 @@
   </ItemGroup>
 
   <ItemGroup>
-    <None Include=".queries\test.query-scheduled.yaml">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </None>
-    <None Include=".queries\test.query-on-demand.yaml">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </None>
-  </ItemGroup>
-
-  <ItemGroup>
     <None Include="appsettings.Development.yaml">
       <DependentUpon>appsettings.yaml</DependentUpon>
     </None>
@@ -34,6 +25,5 @@
       <DependentUpon>appsettings.yaml</DependentUpon>
     </None>
   </ItemGroup>
-
 
 </Project>
