@@ -1,0 +1,29 @@
+name: Release
+
+on:
+  push:
+    tags: 
+      - v*.*.*
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@v2
+    - name: Extract version
+      id: tag
+      uses: actions/github-script@0.2.0
+      with:
+        github-token: ${{ secrets.GITHUB_TOKEN }}
+        script: |
+          return context.payload.ref.replace(/(?:\/)*refs\/tags\/v/, '', '');
+    - name: publish
+      uses: docker/build-push-action@v1
+      with:
+        username: bitshift
+        password: ${{ secrets.DOCKER_TOKEN }}
+        repository: bitshift/elastic-query-exporter
+        path: src
+        dockerfile: src/Exporter/Dockerfile
+        add_git_labels: true
+        tags: ${{ steps.tag.outputs.result }},latest
