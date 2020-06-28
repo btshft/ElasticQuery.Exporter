@@ -1,0 +1,28 @@
+name: Development
+
+on:
+  push:
+    branches: [ master ]
+    paths-ignore:
+    - '**md'
+  pull_request:
+    branches: [ master ]
+    paths-ignore:
+    - '**md'
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@v2
+    - name: build
+      uses: docker/build-push-action@v1
+      with:
+        username: btshft
+        password: ${{ secrets.GITHUB_TOKEN }}
+        registry: docker.pkg.github.com
+        repository: btshft/elasticquery.exporter/elastic-query-exporter
+        path: src
+        dockerfile: src/Exporter/Dockerfile
+        tag_with_sha: true
+        add_git_labels: true
