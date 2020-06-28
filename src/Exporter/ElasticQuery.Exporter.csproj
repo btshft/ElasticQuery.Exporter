@@ -1,4 +1,4 @@
-<Project Sdk="Microsoft.NET.Sdk.Web">
+﻿<Project Sdk="Microsoft.NET.Sdk.Web">
 
   <PropertyGroup>
     <TargetFramework>netcoreapp3.1</TargetFramework>
@@ -18,11 +18,16 @@
   </ItemGroup>
 
   <ItemGroup>
-    <None Include="appsettings.Development.yaml">
-      <DependentUpon>appsettings.yaml</DependentUpon>
+    <None Update="appsettings.yaml">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
-    <None Include="appsettings.Release.yaml">
+    <None Update="appsettings.Development.yaml">
       <DependentUpon>appsettings.yaml</DependentUpon>
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Update="appsettings.Release.yaml">
+      <DependentUpon>appsettings.yaml</DependentUpon>
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
   </ItemGroup>
 
