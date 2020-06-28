@@ -13,7 +13,7 @@ on:
 jobs:
   build:
     env:
-      short_sha: ${GITHUB_SHA::8}
+      GITHUB_SHORT_SHA: ${GITHUB_SHA::8}
     runs-on: ubuntu-latest
     steps:
     - uses: actions/checkout@v2
@@ -24,7 +24,7 @@ jobs:
         password: ${{ secrets.GITHUB_TOKEN }}
         registry: docker.pkg.github.com
         repository: btshft/elasticquery.exporter/elastic-query-exporter
-        tags: ${short_sha}
+        tags: ${{ env.GITHUB_SHORT_SHA }}
         add_git_labels: true
         path: src
         dockerfile: src/Exporter/Dockerfile
