@@ -1,14 +1,15 @@
 # Queries
 
-The metrics provided by the program are determined by queries. Queries can be evaluated on schedule or on demand. Query definition contains of raw JSON Elasticsearch query and additional metadata and parameters.
+The metrics provided by the program are determined by queries. Queries can be evaluated on schedule or on demand. Query definition 
+consists of raw JSON Elasticsearch query and additional metadata and parameters.
 
 ## Query definition
 
 Queries are defined in YAML format. File schema described below.
 
 Generic placeholders are defined as follows:
-* `<es_index_format>` - elasticsearch index name. It can be specified as date-template, which will be rendered on query evaluation. For example `app-logs-{0:yyyy.MM.dd}`.
-* `<es_json_query>` - elasticsearch query part. Should be valid JSON. 
+* `<es-index-format>` - elasticsearch index name. It can be specified as date-template, which will be rendered on query evaluation. For example `app-logs-{0:yyyy.MM.dd}`.
+* `<es-json-query>` - elasticsearch query part. Should be valid JSON. 
 This parameter should contain **only** query part and not include other ES search request components, such as aggregation or filtering.
 
 ### Schema 
@@ -18,7 +19,7 @@ name: <string>
 
 # Elasic indexes to run query on
 indices:
-- <es_index_format>
+- <es-index-format>
 
 # Explicit query timeout
 [ timeout: <duration> | default: null ]
@@ -27,18 +28,18 @@ indices:
 [ interval: <duration> | default: null ]
 
 # Explicie query evaluation mode
-[ evaluation_mode: ondemand | default: null ]
+[ evaluation_mode: <evaluation-mode> | default: null ]
 
 # Query labels
 labels:
 [ - <name>: <value> ... ]
 
-[ sliding_date: <sliding_date_config> ]
+[ sliding_date: <sliding-date-config> ]
 
-query: <es_json_query> 
+query: <es-json-query> 
 ```
 
-### `<sliding_date_config>`
+### `<sliding-date-config>`
 
 Block allows to describe the sliding date window to process only certain records in a specified time interval. Window boundaries are defined as follows
 
@@ -49,7 +50,7 @@ Block allows to describe the sliding date window to process only certain records
 field: <string>
 
 # Window range is ES format, e.g. 30m, 1d, 10s, etc
-range: <es_time> 
+range: <es-time> 
 ```
 
 ## Query example

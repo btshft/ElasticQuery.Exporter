@@ -7,15 +7,15 @@ Exporter can be configured via configuration file, environment variables or comm
 The file is written in YAML format, defined by the scheme described below. Brackets indicate that a parameter is optional. 
 
 ```html
-serilog: <serilog_config>
+serilog: <serilog-config>
 exporter:
   elasticsearch:
     # Global Elasticsearch timeout
     [ request_timeout: <duration> | default: 60s ]
     
     connection:
-      [ single_node : <single_node_connection_config> ]
-      [ static_cluster : <static_cluster_connection_config> ]
+      [ single_node : <single-node-connection-config> ]
+      [ static_cluster : <static-cluster-connection-config> ]
 
   metrics: 
     # Metrics name prefix
@@ -33,31 +33,31 @@ exporter:
       [ timeout: <duration> | default 30s ]
 
       # Defaul query evaluation mode
-      [ mode: <metrics_evaluation_mode> | default: Scheduled ]
+      [ mode: <metrics-evaluation-mode> | default: Scheduled ]
 
   query_files:
-    [- <file_path> ]
+    [- <file-path> ]
 ```
 
-### `<serilog_config>`
+### `<serilog-config>`
 
 Serilog configuration translated to yaml format. See [link](https://github.com/serilog/serilog-settings-configuration) for more details.
 
-### `<single_node_connection_config>`
+### `<single-node-connection-config>`
 
 Configuration for connecting to single-node Elasticsearch
 ```
 url: <string>
 ```
 
-### `<static_cluster_connection_config>`
+### `<static-cluster-connection-config>`
 
 Configuration for connecting to static Elasticsearch cluster
-```
+```html
 urls:
- - <string_1>
+ - <string>
  - ...
- - <string_n>
+ - <string>
 ```
 
 ## Minimal example
