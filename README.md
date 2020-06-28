@@ -2,7 +2,7 @@
 
 The exporter runs Elasticsearch queries and transforms query results to Prometheus metrics.
 
-[![Development](https://github.com/btshft/ElasticQuery.Exporter/workflows/Development/badge.svg)](https://github.com/btshft/ElasticQuery.Exporter/actions?query=workflow%3ADevelopment)
+[![Release](https://github.com/btshft/ElasticQuery.Exporter/workflows/Release/badge.svg)](https://github.com/btshft/ElasticQuery.Exporter/actions?query=workflow%3ARelease) [![Development](https://github.com/btshft/ElasticQuery.Exporter/workflows/Development/badge.svg)](https://github.com/btshft/ElasticQuery.Exporter/actions?query=workflow%3ADevelopment)
 
 ## Queries
 
