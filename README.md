@@ -1,4 +1,4 @@
-# Prometheus Elasticsearch query exporter
+# Prometheus Elasticsearch query exporter [![Docker Image Version (latest semver)](https://img.shields.io/docker/v/bitshift/elastic-query-exporter?sort=semver)](https://hub.docker.com/r/bitshift/elastic-query-exporter)
 
 The exporter runs Elasticsearch queries and transforms query results to Prometheus metrics.
 
