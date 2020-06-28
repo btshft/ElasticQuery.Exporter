@@ -22,5 +22,9 @@ jobs:
       with:
         username: btshft
         password: ${{ secrets.GITHUB_TOKEN }}
-        repository: docker.pkg.github.com/btshft/elasticquery.exporter/elastic-query-exporter
+        registry: docker.pkg.github.com
+        repository: btshft/elasticquery.exporter/elastic-query-exporter
         tags: ${short_sha}
+        add_git_labels: true
+        path: src
+        dockerfile: src/Exporter/Dockerfile
