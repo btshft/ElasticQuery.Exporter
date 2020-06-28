@@ -10,13 +10,6 @@ jobs:
     runs-on: ubuntu-latest
     steps:
     - uses: actions/checkout@v2
-    - name: Extract version
-      id: tag
-      uses: actions/github-script@0.2.0
-      with:
-        github-token: ${{ secrets.GITHUB_TOKEN }}
-        script: |
-          return context.payload.ref.replace(/(?:\/)*refs\/tags\/v/, '', '');
     - name: publish
       uses: docker/build-push-action@v1
       with:
@@ -26,4 +19,5 @@ jobs:
         path: src
         dockerfile: src/Exporter/Dockerfile
         add_git_labels: true
-        tags: ${{ steps.tag.outputs.result }},latest
+        tags: latest
+        tag_with_ref: true
