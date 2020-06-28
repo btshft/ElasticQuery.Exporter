@@ -39,9 +39,16 @@ namespace ElasticQuery.Exporter.Options
             {
                 public SingleNodeOptions SingleNode { get; set; }
 
+                public StaticClusterOptions StaticCluster { get; set; }
+
                 public class SingleNodeOptions
                 {
                     public string Url { get; set; }
+                }
+
+                public class StaticClusterOptions
+                {
+                    public string[] Urls { get; set; } = Array.Empty<string>();
                 }
             }
         }

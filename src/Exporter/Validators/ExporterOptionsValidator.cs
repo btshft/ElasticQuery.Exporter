@@ -19,7 +19,7 @@ namespace ElasticQuery.Exporter.Validators
                 .NotNull()
                 .Custom((options, context) =>
                 {
-                    if (options?.SingleNode == null)
+                    if (options?.SingleNode == null && options?.StaticCluster == null)
                         context.AddFailure("Connection options not specified");
                 });
 

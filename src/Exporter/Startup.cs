@@ -100,7 +100,10 @@ namespace ElasticQuery.Exporter
                 var pool = options switch
                 {
                     _ when options.ElasticSearch.Connection.SingleNode != null
-                    => new SingleNodeConnectionPool(new Uri(options.ElasticSearch.Connection.SingleNode.Url)),
+                        => (IConnectionPool) new SingleNodeConnectionPool(new Uri(options.ElasticSearch.Connection.SingleNode.Url)),
+                    _ when options.ElasticSearch.Connection.StaticCluster != null
+                        => (IConnectionPool) new StaticConnectionPool(options.ElasticSearch.Connection.StaticCluster.Urls
+                            .Select(u => new Uri(u))),
                     _ => null
                 };
 
