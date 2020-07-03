@@ -379,3 +379,4 @@ Thumbs.db
 !.github
 !.azure
 !.sonarlint
+!.test-queries

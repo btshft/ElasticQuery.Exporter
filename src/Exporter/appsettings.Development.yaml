@@ -6,6 +6,7 @@ exporter:
   elasticsearch:
     connection:
       singlenode:
-        url: http://elasticsearch.devtest.local:9200
+        url: http://host.docker.internal:9200
 
   query_files:
+  - ./.test-queries/**/*.yaml

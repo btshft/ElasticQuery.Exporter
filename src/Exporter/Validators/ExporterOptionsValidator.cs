@@ -1,5 +1,4 @@
 ﻿using System;
-using System.IO;
 using ElasticQuery.Exporter.Options;
 using FluentValidation;
 
@@ -29,13 +28,7 @@ namespace ElasticQuery.Exporter.Validators
                     collection.Custom((filePath, context) =>
                     {
                         if (string.IsNullOrWhiteSpace(filePath))
-                        {
                             context.AddFailure("Query file path cannot be null");
-                            return;
-                        }
-
-                        if (!File.Exists(filePath))
-                            context.AddFailure($"Query file '{filePath}' not exists");
                     });
                 });
 

@@ -1,8 +1,6 @@
 ﻿using System;
 using System.Linq;
-using System.Reflection.Metadata;
 using System.Threading.Tasks;
-using App.Metrics.AspNetCore.Endpoints.Middleware;
 using ElasticQuery.Exporter.Models;
 using ElasticQuery.Exporter.Options;
 using ElasticQuery.Exporter.Services.MetricsWriter;

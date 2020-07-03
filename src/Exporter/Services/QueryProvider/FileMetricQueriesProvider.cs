@@ -5,9 +5,11 @@ using System.Linq;
 using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
+using ElasticQuery.Exporter.Lib.File;
 using ElasticQuery.Exporter.Models;
 using ElasticQuery.Exporter.Options;
 using FluentValidation;
+using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 using YamlDotNet.Serialization;
 
@@ -19,12 +21,21 @@ namespace ElasticQuery.Exporter.Services.QueryProvider
         private readonly IDeserializer _deserializer;
         private readonly IValidator<MetricQuery> _queryValidator;
         private readonly Lazy<Task<IReadOnlyCollection<MetricQuery>>> _queriesProvider;
+        private readonly ILogger<FileMetricQueriesProvider> _logger;
+        private readonly IGlobFileProvider _fileProvider;
 
-        public FileMetricQueriesProvider(IOptions<ExporterOptions> exporterOptionsProvider, IDeserializer deserializer, IValidator<MetricQuery> queryValidator)
+        public FileMetricQueriesProvider(
+            IOptions<ExporterOptions> exporterOptionsProvider,
+            IDeserializer deserializer,
+            IValidator<MetricQuery> queryValidator,
+            ILogger<FileMetricQueriesProvider> logger, 
+            IGlobFileProvider fileProvider)
         {
             _exporterOptionsProvider = exporterOptionsProvider;
             _deserializer = deserializer;
             _queryValidator = queryValidator;
+            _logger = logger;
+            _fileProvider = fileProvider;
 
             _queriesProvider = new Lazy<Task<IReadOnlyCollection<MetricQuery>>>(CreateQueries);
         }
@@ -38,30 +49,56 @@ namespace ElasticQuery.Exporter.Services.QueryProvider
 
         private async Task<IReadOnlyCollection<MetricQuery>> CreateQueries()
         {
+            async Task ParseAsync(string path, IDictionary<string, MetricQuery> queryMetrics)
+            {
+                var content = await File.ReadAllTextAsync(path, Encoding.UTF8);
+                var query = _deserializer.Deserialize<MetricQuery>(content);
+
+                if (queryMetrics.ContainsKey(query.Name))
+                    throw new Exception($"Attempt to insert duplicate query '{query.Name}'");
+
+                var result = await _queryValidator.ValidateAsync(query);
+                if (!result.IsValid)
+                    throw new Exception($"Query '{query.Name}' is invalid: {result}");
+
+                for (var i = 0; i < query.Indices.Count; i++)
+                    query.Indices[i] = string.Format(query.Indices[i], DateTime.UtcNow);
+
+                queryMetrics.Add(query.Name, query);
+            }
+
             var options = _exporterOptionsProvider.Value;
             var queries = new Dictionary<string, MetricQuery>();
+            var processedPath = new HashSet<string>(StringComparer.InvariantCulture);
 
-            if (options.QueryFiles.Any())
+            if (!options.QueryFiles.Any())
+                return queries.Values;
+
+            foreach (var queryFile in options.QueryFiles)
             {
-                foreach (var queryFile in options.QueryFiles)
+                var filesPath = _fileProvider.GetFiles(queryFile).ToArray();
+                if (!filesPath.Any())
                 {
-                    if (!File.Exists(queryFile))
-                        throw new Exception($"Query file '{queryFile}' not exists");
+                    _logger.LogWarning($"No query files matched glob path '{queryFile}'");
+                    continue;
+                }
 
-                    var content = await File.ReadAllTextAsync(queryFile, Encoding.UTF8);
-                    var query = _deserializer.Deserialize<MetricQuery>(content);
+                _logger.LogInformation($"Glob pattern '{queryFile}' resolved to '{filesPath.Length}' files");
 
-                    if (queries.ContainsKey(query.Name))
-                        throw new Exception($"Attempt to insert duplicate query '{query.Name}'");
+                foreach (var path in filesPath)
+                {
+                    _logger.LogInformation($"Start processing file '{path}'");
 
-                    var result = await _queryValidator.ValidateAsync(query);
-                    if (!result.IsValid)
-                        throw new Exception($"Query '{query.Name}' is invalid: {result}");
+                    var exists = !processedPath.Add(path);
+                    if (exists)
+                    {
+                        _logger.LogWarning($"File '{path}' has been processed before. Skipping it...");
+                        continue;
+                    }
 
-                    for (var i = 0; i < query.Indices.Count; i++)
-                        query.Indices[i] = string.Format(query.Indices[i], DateTime.UtcNow);
+                    await ParseAsync(path, queries);
 
-                    queries.Add(query.Name, query);
+                    _logger.LogInformation($"File '{path}' successfully processed");
                 }
             }
 

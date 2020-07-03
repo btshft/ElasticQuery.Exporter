@@ -4,6 +4,7 @@ using App.Metrics;
 using App.Metrics.Formatters.Prometheus;
 using ElasticQuery.Exporter.Jobs;
 using ElasticQuery.Exporter.Lib.Extension;
+using ElasticQuery.Exporter.Lib.File;
 using ElasticQuery.Exporter.Middleware;
 using ElasticQuery.Exporter.Models;
 using ElasticQuery.Exporter.Options;
@@ -114,6 +115,12 @@ namespace ElasticQuery.Exporter
                     .RequestTimeout(options.ElasticSearch.RequestTimeout);
 
                 return new ElasticClient(settings);
+            });
+
+            services.AddSingleton<IGlobFileProvider>(sp =>
+            {
+                var environment = sp.GetRequiredService<IHostEnvironment>();
+                return new GlobFileProvider(environment.ContentRootPath);
             });
 
             services.AddTransient<IValidator<MetricQuery>, MetricQueryValidator>();

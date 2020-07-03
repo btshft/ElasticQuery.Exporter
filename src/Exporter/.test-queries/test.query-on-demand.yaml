@@ -1,0 +1,21 @@
+﻿name: "on_demand_query"
+indices:
+- kibana_sample_data_logs
+
+evaluation_mode: ondemand
+sliding_date:
+  field: "timestamp"
+  range: 60d
+
+query: |
+  { 
+      "bool": {
+         "must": [
+           {
+            "match": {
+              "agent": "Mozilla/5.0 (X11; Linux x86_64; rv:6.0a1) Gecko/20110421 Firefox/6.0a1"
+            }
+          }
+        ]
+      }
+  }
