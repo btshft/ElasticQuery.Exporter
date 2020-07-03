@@ -6,6 +6,10 @@ Exporter can be configured via configuration file, environment variables or comm
 
 The file is written in YAML format, defined by the scheme described below. Brackets indicate that a parameter is optional. 
 
+Generic placeholders:
+* `<file-path>` - Path to file, can be relative to '/app' inside container or absolute. Supports wildcard patterns - `*`, `**`, and `..`, check [Microsoft docs](https://docs.microsoft.com/en-us/dotnet/api/microsoft.extensions.filesystemglobbing.matcher?view=dotnet-plat-ext-3.1#remarks) for more info.
+
+### Scheme
 ```html
 serilog: <serilog-config>
 exporter:
@@ -32,10 +36,11 @@ exporter:
       # Default query timeout
       [ timeout: <duration> | default 30s ]
 
-      # Defaul query evaluation mode
+      # Default query evaluation mode
       [ mode: <metrics-evaluation-mode> | default: Scheduled ]
 
   query_files:
+    # Path to query file(s). Directories are not supported
     [- <file-path> ]
 ```
 
