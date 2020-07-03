@@ -37,6 +37,9 @@ namespace ElasticQuery.Exporter.Validators
             RuleFor(s => s.SlidingDate)
                 .Custom((sliding, context) =>
                 {
+                    if (sliding == null)
+                        return;
+
                     if (string.IsNullOrEmpty(sliding.Field))
                         context.AddFailure(nameof(sliding.Field), "field name is required");
 
