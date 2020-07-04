@@ -57,3 +57,5 @@ Exporter provides several endpoints:
 
 1. `/metrics` - Prometheus metrics endpoint
 2. `/scheduler` - Scheduler dashboard. 
+3. `/health/live` - Liveness probe.
+4. `/health/ready` - Readiness probe.
