@@ -9,5 +9,4 @@ exporter:
         url: http://host.docker.internal:9200
 
   query_files:
-  - /app/queries/on-demand.query.yaml
-  - /app/queries/scheduled.query.yaml
+  - queries/*.yaml

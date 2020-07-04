@@ -2,7 +2,7 @@ version: '3.7'
 
 services:
   es-query-exporter: 
-    image: docker.pkg.github.com/btshft/elasticquery.exporter/elastic-query-exporter:sha-2392426
+    image: bitshift/elastic-query-exporter:v1.0.0-preview.4
     environment: 
       - ASPNETCORE_ENVIRONMENT=Release
     ports:

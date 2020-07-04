@@ -1,0 +1,32 @@
+name: "on_demand_raw_query"
+indices:
+- kibana_sample_data_logs
+
+type: raw
+evaluation_mode: ondemand
+request: |
+    {
+      "size": 0,
+      "query": {
+        "bool": {
+          "must": [
+            {
+              "match": {
+                "agent": "Mozilla/5.0 (X11; Linux x86_64; rv:6.0a1) Gecko/20110421 Firefox/6.0a1"
+              }
+            },
+            {
+              "range": {
+                "timestamp": {
+                  "gte": "now-30d",
+                  "lt": "now"
+                }
+              }
+            }
+          ]
+        }
+      },
+      "aggs": {
+        "avg_bytes" : { "avg" : { "field" : "bytes" } }
+      }
+    }
