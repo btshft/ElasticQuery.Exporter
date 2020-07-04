@@ -160,7 +160,7 @@ namespace ElasticQuery.Exporter
             });
 
             app.UseHangfireServer();
-            app.UseHangfireDashboard("/dashboard");
+            app.UseHangfireDashboard("/scheduler");
         }
     }
 }
