@@ -2,12 +2,13 @@ using System;
 using System.Linq;
 using App.Metrics;
 using App.Metrics.Formatters.Prometheus;
-using ElasticQuery.Exporter.Jobs;
+using ElasticQuery.Exporter.HealthCheck;
 using ElasticQuery.Exporter.Lib.Extension;
 using ElasticQuery.Exporter.Lib.File;
 using ElasticQuery.Exporter.Middleware;
 using ElasticQuery.Exporter.Models;
 using ElasticQuery.Exporter.Options;
+using ElasticQuery.Exporter.Scheduler;
 using ElasticQuery.Exporter.Services.MetricsWriter;
 using ElasticQuery.Exporter.Services.QueryExecutor;
 using ElasticQuery.Exporter.Services.QueryProvider;
@@ -17,9 +18,11 @@ using FluentValidation;
 using Hangfire;
 using Hangfire.MemoryStorage;
 using Microsoft.AspNetCore.Builder;
+using Microsoft.AspNetCore.Diagnostics.HealthChecks;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Diagnostics.HealthChecks;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
@@ -82,6 +85,17 @@ namespace ElasticQuery.Exporter
                     .UseRecommendedSerializerSettings()
                     .UseMemoryStorage();
             });
+
+            services.AddSingleton<MetricsSchedulerInitializedHealthCheck>();
+            services.AddHealthChecks()
+                .AddCheck<MetricsSchedulerInitializedHealthCheck>(
+                    name: "scheduler",
+                    failureStatus: HealthStatus.Degraded,
+                    tags: new[] { "ready" })
+                .AddTypeActivatedCheck<ElasticSearchAggregateHealthCheck>(
+                    name: "elasticsearch",
+                    tags: new[] { "live" },
+                    failureStatus: HealthStatus.Degraded);
 
             // Exporter
             services.AddOptions<ExporterOptions>()
@@ -153,8 +167,20 @@ namespace ElasticQuery.Exporter
             {
                 var builder = endpoints
                     .CreateApplicationBuilder()
-                    .UseMiddleware<MetricsEvaluationMiddleware>()
+                    .UseMiddleware<OndemandMetricsEvaluationMiddleware>()
                     .UseMetricsEndpoint();
+
+                endpoints.MapHealthChecks("/health/ready", new HealthCheckOptions
+                {
+                    Predicate = hc =>  hc.Tags.Contains("ready"),
+                    ResponseWriter = HealthCheckJsonWriter.WriteAsync,
+                });
+
+                endpoints.MapHealthChecks("/health/live", new HealthCheckOptions
+                {
+                    Predicate = hc => hc.Tags.Contains("live"),
+                    ResponseWriter = HealthCheckJsonWriter.WriteAsync
+                });
 
                 endpoints.MapGet("/metrics", builder.Build());
             });

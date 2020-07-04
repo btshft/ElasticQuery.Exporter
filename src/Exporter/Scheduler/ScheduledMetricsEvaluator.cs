@@ -9,7 +9,7 @@ using Hangfire;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 
-namespace ElasticQuery.Exporter.Jobs
+namespace ElasticQuery.Exporter.Scheduler
 {
     public class ScheduledMetricsEvaluator
     {

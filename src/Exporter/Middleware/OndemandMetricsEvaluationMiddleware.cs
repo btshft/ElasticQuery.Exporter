@@ -12,11 +12,11 @@ using Microsoft.Extensions.Options;
 
 namespace ElasticQuery.Exporter.Middleware
 {
-    public class MetricsEvaluationMiddleware
+    public class OndemandMetricsEvaluationMiddleware
     {
         private readonly RequestDelegate _next;
 
-        public MetricsEvaluationMiddleware(RequestDelegate next)
+        public OndemandMetricsEvaluationMiddleware(RequestDelegate next)
         {
             _next = next;
         }
@@ -26,7 +26,7 @@ namespace ElasticQuery.Exporter.Middleware
             IOptions<ExporterOptions> optionsProvider,
             IMetricQueryExecutor queryExecutor,
             IMetricsWriter metricsWriter,
-            ILogger<MetricsEvaluationMiddleware> logger)
+            ILogger<OndemandMetricsEvaluationMiddleware> logger)
         {
             var options = optionsProvider.Value;
             var defaultMode = options.Metrics.Evaluation.Mode;
