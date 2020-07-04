@@ -55,12 +55,11 @@ namespace ElasticQuery.Exporter.Scheduler
             foreach (var query in schedulerQueries)
             {
                 var queryRef = query;
-                var interval = query.Interval.GetValueOrDefault(options.Metrics.Evaluation.Interval);
 
                 _jobClient.Schedule<ScheduledMetricsEvaluator>(
-                    e => e.EvaluateAsync(queryRef, stoppingToken), interval);
+                    e => e.EvaluateAsync(queryRef, stoppingToken), TimeSpan.Zero);
 
-                _logger.LogInformation("Query '{Query}' scheduled at '{Occurence}'", query.Name, (DateTime.Now + interval));
+                _logger.LogInformation("Query '{Query}' successfully scheduled", query.Name);
             }
 
             _healthCheck.SchedulerInitialized = true;

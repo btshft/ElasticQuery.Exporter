@@ -21,6 +21,12 @@ namespace ElasticQuery.Exporter.Services.MetricsWriter
                 ResetOnReporting = true,
                 MeasurementUnit = Unit.Custom("milliseconds")
             };
+
+            public static readonly GaugeOptions ValueAggregation = new GaugeOptions
+            {
+                Name = "value_aggregation",
+                ResetOnReporting = true
+            };
         }
 
         public static class Counters

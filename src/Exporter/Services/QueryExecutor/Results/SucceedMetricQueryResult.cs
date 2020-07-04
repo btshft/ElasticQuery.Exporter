@@ -1,4 +1,6 @@
 ﻿using System;
+using System.Collections.Generic;
+using System.Linq;
 
 namespace ElasticQuery.Exporter.Services.QueryExecutor.Results
 {
@@ -8,13 +10,16 @@ namespace ElasticQuery.Exporter.Services.QueryExecutor.Results
 
         public TimeSpan Duration { get; }
 
-        public SucceedMetricQueryResult(long hits, TimeSpan duration)
+        public SucceedMetricQueryResult(long hits, TimeSpan duration, IEnumerable<ValueAggregationResult> valueAggregations)
         {
             Hits = hits;
             Duration = duration;
+            ValueAggregations = valueAggregations.ToArray();
         }
 
         /// <inheritdoc />
         public bool IsSucceed { get; } = true;
+
+        public IReadOnlyCollection<ValueAggregationResult> ValueAggregations { get; }
     }
 }

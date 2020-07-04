@@ -3,9 +3,9 @@ using System.Collections.Generic;
 
 namespace ElasticQuery.Exporter.Models
 {
-    public abstract class MetricQuery
+    public class MetricQueryDefinition
     {
-        public abstract MetricQueryType Type { get; }
+        public MetricQueryType Type { get; set; }
 
         public string Name { get; set; }
 
@@ -18,7 +18,20 @@ namespace ElasticQuery.Exporter.Models
         public List<string> Indices { get; set; }
             = new List<string>();
 
-        public Dictionary<string, string> Labels { get; set; } 
+        public Dictionary<string, string> Labels { get; set; }
             = new Dictionary<string, string>();
+
+        #region Default Query
+        public string Request { get; set; }
+
+        #endregion
+
+        # region Raw Query
+
+        public MetricQuerySlidingDate SlidingDate { get; set; }
+
+        public string Query { get; set; }
+
+        #endregion
     }
 }

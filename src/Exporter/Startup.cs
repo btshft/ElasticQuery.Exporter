@@ -6,13 +6,11 @@ using ElasticQuery.Exporter.HealthCheck;
 using ElasticQuery.Exporter.Lib.Extension;
 using ElasticQuery.Exporter.Lib.File;
 using ElasticQuery.Exporter.Middleware;
-using ElasticQuery.Exporter.Models;
 using ElasticQuery.Exporter.Options;
 using ElasticQuery.Exporter.Scheduler;
 using ElasticQuery.Exporter.Services.MetricsWriter;
 using ElasticQuery.Exporter.Services.QueryExecutor;
 using ElasticQuery.Exporter.Services.QueryProvider;
-using ElasticQuery.Exporter.Validators;
 using Elasticsearch.Net;
 using FluentValidation;
 using Hangfire;
@@ -146,7 +144,6 @@ namespace ElasticQuery.Exporter
                 return new GlobFileProvider(environment.ContentRootPath);
             });
 
-            services.AddTransient<IValidator<MetricQuery>, MetricQueryValidator>();
             services.AddTransient<IValidator<ExporterOptions>, ExporterOptionsValidator>();
 
             services.AddSingleton<IMetricQueriesProvider, FileMetricQueriesProvider>();

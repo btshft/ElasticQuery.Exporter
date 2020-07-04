@@ -7,8 +7,8 @@ using System.Threading;
 using System.Threading.Tasks;
 using ElasticQuery.Exporter.Lib.File;
 using ElasticQuery.Exporter.Models;
+using ElasticQuery.Exporter.Models.Mappers;
 using ElasticQuery.Exporter.Options;
-using FluentValidation;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 using YamlDotNet.Serialization;
@@ -19,7 +19,6 @@ namespace ElasticQuery.Exporter.Services.QueryProvider
     {
         private readonly IOptions<ExporterOptions> _exporterOptionsProvider;
         private readonly IDeserializer _deserializer;
-        private readonly IValidator<MetricQuery> _queryValidator;
         private readonly Lazy<Task<IReadOnlyCollection<MetricQuery>>> _queriesProvider;
         private readonly ILogger<FileMetricQueriesProvider> _logger;
         private readonly IGlobFileProvider _fileProvider;
@@ -27,13 +26,11 @@ namespace ElasticQuery.Exporter.Services.QueryProvider
         public FileMetricQueriesProvider(
             IOptions<ExporterOptions> exporterOptionsProvider,
             IDeserializer deserializer,
-            IValidator<MetricQuery> queryValidator,
             ILogger<FileMetricQueriesProvider> logger, 
             IGlobFileProvider fileProvider)
         {
             _exporterOptionsProvider = exporterOptionsProvider;
             _deserializer = deserializer;
-            _queryValidator = queryValidator;
             _logger = logger;
             _fileProvider = fileProvider;
 
@@ -52,19 +49,12 @@ namespace ElasticQuery.Exporter.Services.QueryProvider
             async Task ParseAsync(string path, IDictionary<string, MetricQuery> queryMetrics)
             {
                 var content = await File.ReadAllTextAsync(path, Encoding.UTF8);
-                var query = _deserializer.Deserialize<MetricQuery>(content);
+                var definition = _deserializer.Deserialize<MetricQueryDefinition>(content);
 
-                if (queryMetrics.ContainsKey(query.Name))
-                    throw new Exception($"Attempt to insert duplicate query '{query.Name}'");
+                if (queryMetrics.ContainsKey(definition.Name))
+                    throw new Exception($"Attempt to insert duplicate query '{definition.Name}'");
 
-                var result = await _queryValidator.ValidateAsync(query);
-                if (!result.IsValid)
-                    throw new Exception($"Query '{query.Name}' is invalid: {result}");
-
-                for (var i = 0; i < query.Indices.Count; i++)
-                    query.Indices[i] = string.Format(query.Indices[i], DateTime.UtcNow);
-
-                queryMetrics.Add(query.Name, query);
+                queryMetrics.Add(definition.Name, definition.ToQuery());
             }
 
             var options = _exporterOptionsProvider.Value;

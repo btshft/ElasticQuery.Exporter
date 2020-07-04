@@ -1,8 +1,7 @@
 ﻿using System;
-using ElasticQuery.Exporter.Options;
 using FluentValidation;
 
-namespace ElasticQuery.Exporter.Validators
+namespace ElasticQuery.Exporter.Options
 {
     public class ExporterOptionsValidator : AbstractValidator<ExporterOptions>
     {

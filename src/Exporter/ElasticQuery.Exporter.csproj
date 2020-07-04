@@ -15,9 +15,16 @@
   </ItemGroup>
 
   <ItemGroup>
+    <None Include=".test-queries\test.raw-query-on-demand.yaml">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+  </ItemGroup>
+
+  <ItemGroup>
     <PackageReference Include="App.Metrics.AspNetCore.Endpoints" Version="4.1.0" />
     <PackageReference Include="App.Metrics.Prometheus" Version="4.1.0" />
     <PackageReference Include="AspNetCore.HealthChecks.Elasticsearch" Version="3.1.1" />
+    <PackageReference Include="AutoMapper" Version="10.0.0" />
     <PackageReference Include="Ben.Demystifier" Version="0.1.6" />
     <PackageReference Include="FluentValidation" Version="8.6.2" />
     <PackageReference Include="Hangfire.AspNetCore" Version="1.7.11" />
