@@ -49,3 +49,11 @@ docker run --rm --name es-query-exporter \
 
 Other launch formats and configuration files are presented in the [examples](https://github.com/btshft/ElasticQuery.Exporter/tree/master/examples). 
 See [documentation](https://github.com/btshft/ElasticQuery.Exporter/tree/master/docs) for configuration details.
+
+
+## Endpoints
+
+Exporter provides several endpoints:
+
+1. `/metrics` - Prometheus metrics endpoint
+2. `/scheduler` - Scheduler dashboard. 
