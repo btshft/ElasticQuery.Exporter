@@ -7,7 +7,7 @@ Exporter can be configured via configuration file, environment variables or comm
 The file is written in YAML format, defined by the scheme described below. Brackets indicate that a parameter is optional. 
 
 Generic placeholders:
-* `<file-path>` - Path to file, can be relative to '/app' inside container or absolute. Supports wildcard patterns - `*`, `**`, and `..`, check [Microsoft docs](https://docs.microsoft.com/en-us/dotnet/api/microsoft.extensions.filesystemglobbing.matcher?view=dotnet-plat-ext-3.1#remarks) for more info.
+* `<file-path>` - Path to query file(s) relative to '/app' directory inside container. Supports wildcard patterns - `*`, `**`, and `..`, check [Microsoft docs](https://docs.microsoft.com/en-us/dotnet/api/microsoft.extensions.filesystemglobbing.matcher?view=dotnet-plat-ext-3.1#remarks) for more info.
 
 ### Schema
 ```html
