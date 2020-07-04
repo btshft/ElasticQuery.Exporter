@@ -14,6 +14,8 @@ using ElasticQuery.Exporter.Services.QueryProvider;
 using ElasticQuery.Exporter.Validators;
 using Elasticsearch.Net;
 using FluentValidation;
+using Hangfire;
+using Hangfire.MemoryStorage;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.Configuration;
@@ -74,6 +76,13 @@ namespace ElasticQuery.Exporter
                     .OfType<MetricsPrometheusTextOutputFormatter>().First();
             });
 
+            services.AddHangfire(o =>
+            {
+                o.SetDataCompatibilityLevel(CompatibilityLevel.Version_170)
+                    .UseRecommendedSerializerSettings()
+                    .UseMemoryStorage();
+            });
+
             // Exporter
             services.AddOptions<ExporterOptions>()
                 .Configure(o =>
@@ -130,7 +139,8 @@ namespace ElasticQuery.Exporter
             services.AddSingleton<IMetricQueryExecutor, MetricQueryExecutor>();
             services.AddSingleton<IMetricsWriter, MetricsWriter>();
 
-            services.AddHostedService<MetricsEvaluationScheduler>();
+            services.AddTransient<ScheduledMetricsEvaluator>();
+            services.AddHostedService<ScheduledMetricsInitializer>();
         }
 
         public void Configure(IApplicationBuilder app, IWebHostEnvironment env)
@@ -148,6 +158,9 @@ namespace ElasticQuery.Exporter
 
                 endpoints.MapGet("/metrics", builder.Build());
             });
+
+            app.UseHangfireServer();
+            app.UseHangfireDashboard("/dashboard");
         }
     }
 }
