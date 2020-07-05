@@ -91,7 +91,7 @@ query: |
 ```
 
 ### Raw query
-```
+```yaml
 name: "agent_query"
 type: raw
 evaluation_mode: ondemand
