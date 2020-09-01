@@ -26,13 +26,13 @@
     <PackageReference Include="AspNetCore.HealthChecks.Elasticsearch" Version="3.1.1" />
     <PackageReference Include="AutoMapper" Version="10.0.0" />
     <PackageReference Include="Ben.Demystifier" Version="0.1.6" />
-    <PackageReference Include="FluentValidation" Version="8.6.2" />
-    <PackageReference Include="Hangfire.AspNetCore" Version="1.7.11" />
+    <PackageReference Include="FluentValidation" Version="9.2.0" />
+    <PackageReference Include="Hangfire.AspNetCore" Version="1.7.12" />
     <PackageReference Include="Hangfire.MemoryStorage" Version="1.7.0" />
-    <PackageReference Include="Microsoft.Extensions.FileSystemGlobbing" Version="3.1.5" />
+    <PackageReference Include="Microsoft.Extensions.FileSystemGlobbing" Version="3.1.7" />
     <PackageReference Include="Microsoft.VisualStudio.Azure.Containers.Tools.Targets" Version="1.10.9" />
-    <PackageReference Include="NEST" Version="7.8.1" />
-    <PackageReference Include="Serilog.AspNetCore" Version="3.2.0" />
+    <PackageReference Include="NEST" Version="7.9.0" />
+    <PackageReference Include="Serilog.AspNetCore" Version="3.4.0" />
     <PackageReference Include="YamlDotNet" Version="8.1.2" />
   </ItemGroup>
 

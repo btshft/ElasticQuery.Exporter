@@ -42,7 +42,7 @@ namespace ElasticQuery.Exporter.Services.QueryExecutor
         private async Task<IMetricQueryResult> ExecuteRawAsync(RawMetricQuery query, TimeSpan timeout,
             CancellationToken cancellation = default)
         {
-            var indices = GetIndices(query);
+            var indices = await GetIndicesAsync(query);
             var indicesString = string.Join(",", indices);
 
             var result = await _client.LowLevel.SearchAsync<SearchResponse<dynamic>>(indicesString, body: query.Request,
@@ -59,10 +59,11 @@ namespace ElasticQuery.Exporter.Services.QueryExecutor
         private async Task<IMetricQueryResult> ExecuteDefaultAsync(DefaultMetricQuery query, TimeSpan timeout, 
             CancellationToken cancellation = default)
         {
+            var indices = await GetIndicesAsync(query);
             var result = await _client.SearchAsync<dynamic>(d =>
             {
                 return d
-                    .Index(Indices.Index(GetIndices(query)))
+                    .Index(Indices.Index(indices))
                     .Source(enabled: false)
                     .Query(q =>
                     {
@@ -93,7 +94,7 @@ namespace ElasticQuery.Exporter.Services.QueryExecutor
             return ConvertResult<dynamic, ISearchResponse<dynamic>>(result);
         }
 
-        private IEnumerable<string> GetIndices(MetricQuery query)
+        private async Task<IEnumerable<string>> GetIndicesAsync(MetricQuery query)
         {
             var indices = new List<string>();
             var options = _optionsProvider.Value.ElasticSearch;
@@ -103,6 +104,16 @@ namespace ElasticQuery.Exporter.Services.QueryExecutor
 
             if (query.Indices.Any())
                 indices.AddRange(query.Indices.Select(i => string.Format(i, DateTime.UtcNow)));
+
+            if (indices.Count < 1)
+                throw new InvalidOperationException($"There's no indexes provided for query '{query.Name}', ensure your configuration is correct");
+
+            var existsTasks = indices.Select(i => _client.Indices.ExistsAsync(Indices.Index(i)));
+            var indexExists = await Task.WhenAll(existsTasks);
+
+            if (indexExists.All(r => !r.Exists))
+                throw new InvalidOperationException(
+                    $"Unable to find any existing index for query '{query.Name}', ensure index format and name provided correctly");
 
             return indices;
         }
